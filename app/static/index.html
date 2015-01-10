@@ -7,9 +7,28 @@
         <link href='../static/stylesheet.css' rel='stylesheet' type='text/css'>
         <link href='../static/prettify/sunburst.css' rel='stylesheet' type='text/css'>
 
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script src="../static/prettify/run_prettify.js"></script>
 
         <title>Rice API</title>
+
+        <script>
+            $(function () {
+                $('a[href*=#]:not([href=#])').click(function () {
+                    if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+
+                        var target = $(this.hash);
+                        target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                        if (target.length) {
+                            $('html,body').animate({
+                                scrollTop: target.offset().top
+                            }, 1000);
+                            return false;
+                        }
+                    }
+                });
+            });
+        </script>
     </head>
 
     <body>
@@ -17,21 +36,25 @@
             <p class="title">Rice API</p>
             <p class="subtitle">A JSON-based web API to make retrieving data about the university slightly less frustrating</p>
             <br/>
-            <p class="link"><a href="#">about</a></p>
-            <p class="link"><a href="#">api key registration</a></p>
-            <p class="link"><a href="#">usage</a></p>
-            <p class="link"><a href="#">example</a></p>
-            <p class="link"><a href="#">compiling from source</a></p>
+            <p class="link"><a href="#about">about</a></p>
+            <p class="link"><a href="#api">api key registration</a></p>
+            <p class="link"><a href="#usage">usage</a></p>
+            <p class="link"><a href="#source">compiling from source</a></p>
+            <br/><br/>
+            <a href="https://www.github.com/LINKIWI/RiceAPI"><img src="static/github.png" width="30px" height="30px" /></a>
         </div>
         <div class="content">
+            <a name="about"></a>
             <p class="heading">About</p>
             <p class="text">Rice API is a tool designed to allow students and faculty easy access to publicly accessible data about the university. The current supported functionality include retrieving information about a person (e.g. a student) and retrieving a list of courses based on search criteria. Data is returned by the API in a friendly, JSON format. Anyone with a valid Rice Net ID is permitted to use the tool.</p>
             <p class="text">This API interface was developed out of moderate frustration over the difficulty for developers to access information about the university without resorting to clumsy, line-by-line parsing of HTML data. This API does said clumsy parsing for you. You can take a look at the full source code <a href="https://www.github.com/LINKIWI/RiceAPI">here</a>.</p>
             <br/>
+            <a name="api"></a>
             <p class="heading">API key registration</p>
             <p class="text">As a security measure, only Rice students and faculty (e.g. those with a valid Net ID) are permitted to use this API. Thus, the API will only respond to requests supplemented with a valid API key.</p>
             <p class="text">To obtain an API key, simply <a href="/login">log in with your Net ID</a> and click on "Generate API key." The server will automatically generate a unique, alphanumeric API key that will be associated with your Net ID. You are permitted (theoretically) unlimited requests with your key through this application.</p>
             <br/>
+            <a name="usage"></a>
             <p class="heading">Usage</p>
             <p class="text">To use the API, simply execute an HTTP GET request to the following URL:</p>
             <pre>http://api.rice.edu/api/action?key=API_KEY&amp;parameter=SOME_CRITERION</pre>
@@ -325,13 +348,29 @@ Content-Type: application/json
 }
             </pre>
             <br/>
-            <p class="heading">Example</p>
-            <p class="text">test</p>
-            <br/>
+            <a name="source"></a>
             <p class="heading">Compiling from source</p>
-            <p class="text">test</p>
-            <br/>
-            <br/>
+            <p class="text">You are welcome to compile this application from source and run it locally. In order to do so, you must meet the following requirements:</p>
+            <ul>
+                <li><p class="text">Python 2.7</p></li>
+                <li><p class="text">Flask (via <code>pip install flask</code>)</p></li>
+                <li><p class="text">Flask-CAS (via <code>pip install flask-cas</code>)</p></li>
+                <li><p class="text">Flask-SQLAlchemy (via <code>pip install flask-sqlalchemy</code>)</p></li>
+                <li><p class="text">BeautifulSoup (via <code>pip install beautifulsoup4</code>)</p></li>
+            </ul>
+            <p class="text">First, <a href="https://www.github.com/LINKIWI/RiceAPI">grab the full source code from Github</a>. After cloning the repository or unzipping its contents locally, you must first create the SQLite database storing Net IDs and API keys:</p>
+            <pre>
+> from app import db
+> db.create_all()</pre>
+            <p class="text">Then, you can start the app in a Python shell:</p>
+            <pre>
+> python RiceAPI.py
+* Running on http://0.0.0.0:5000/
+* Restarting with reloader</pre>
+            <p class="text">You can now access the same features available on the web API locally at the following URL:</p>
+            <pre>http://localhost:5000/</pre>
+            <p class="text">All functionality is identical sans the URL. The same rules regarding parameters and API keys still apply.</p>
+            <br/><br/><br/>
             <p class="footer">Rice API was developed by <a href="http://www.kevinlin.info">Kevin Lin</a>, ELEC/CS '18</p>
         </div>
     </body>
