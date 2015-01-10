@@ -1,7 +1,10 @@
+# API.PY
+# Handles logic related to the API itself.
+
+
 import urllib2
 
 from flask import request
-from bs4 import BeautifulSoup
 import flask
 
 from app import app
@@ -11,24 +14,20 @@ import config
 from bs4 import BeautifulSoup
 
 
-@app.route('/')
-def index():
-    return "hello world"
-
-
 @app.route('/api/people')
 def people_api():
     """
     API interface for looking up people
     """
     if not is_api_key_valid(request.args.get("key", "")):
-        return error("The provided API key is not authorized")
+        return error("Invalid or unauthorized API key")
 
     # Parameters from URL
     lookup_net_id = request.args.get("net_id", None)
     lookup_name = request.args.get("name", None)
     # Replace spaces in name with plus sign, if they exist
-    lookup_name = "+".join(lookup_name.split())
+    if lookup_name:
+        lookup_name = "+".join(lookup_name.split())
 
     # Rice 411 lookup directory
     # Prioritize search by Net ID
@@ -40,7 +39,6 @@ def people_api():
         return error("One of Net ID or Name in URL parameters must be non-null")
     data = urllib2.urlopen(url)
 
-    print(lookup_name)
     # Parsing HTML data like this is highly unpredictable. Thus, a bunch of try-excepts:
     people = []
     person = {"name": None, "year": None, "college": None, "major": None, "address": None, "email": None}
@@ -109,7 +107,7 @@ def courses_api():
     # Initial error handling
     # Check valid API key
     if not is_api_key_valid(api_key):
-        return error("The provided API key is not authorized")
+        return error("Invalid or unauthorized API key")
     # Check valid (int-castable) year
     try:
         int(year)
@@ -118,7 +116,7 @@ def courses_api():
     # Check valid other parameters
     if len(code) == 0 and len(title) == 0 and len(instructor) == 0 and len(subject) == 0:
         return error("Not enough parameters for search")
-    if len(subject) != 4:
+    if len(subject) != 4 and len(subject) != 0:
         return error("Invalid subject code " + subject)
 
     # Create term code

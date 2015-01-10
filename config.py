@@ -1,8 +1,8 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Required for Flask sesion
-SECRET_KEY = 'U\t\xeb\xec\xdf\xebS\xe7f\x10MFE\xd3\xaaQ\xbd\x8ehGU\x84\xf3\xcd'
+# Required for Flask session
+SECRET_KEY = str(os.urandom(24))
 
 # Length of generated alphanumeric API key
 API_KEY_LENGTH = 30
@@ -12,4 +12,4 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'users.db')
 
 # CAS authentication
 CAS_SERVER = 'https://netid.rice.edu'
-CAS_AFTER_LOGIN = 'after_login'
+CAS_AFTER_LOGIN = 'api_key'

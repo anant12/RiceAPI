@@ -1,0 +1,136 @@
+body {
+    background: #F7F7F7;
+    margin-top: 60px;
+    margin-bottom: 60px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #242424;
+}
+
+pre {
+    background: #F2F2F2;
+    padding: 10px;
+    overflow: auto;
+}
+
+code {
+    background: #F2F2F2;
+    padding: 4px;
+    font-size: 14px;
+}
+
+p.title {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 50px;
+    line-height: 2px;
+    color: #242424;
+}
+
+p.subtitle {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: #242424;
+}
+
+p.heading {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 30px;
+    color: #242424;
+}
+
+p.text {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    color: #242424;
+}
+
+p.table_text {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    color: #242424;
+}
+
+p.bold_text {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    color: #242424;
+}
+
+p.text_alt {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 10px;
+    color: #242424;
+}
+
+p.subheading {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: #242424;
+}
+
+p.footer {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    color: #242424;
+}
+
+p.link {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 10px;
+    color: #242424;
+}
+
+div.content {
+    margin-left: 480px;
+    margin-right: 400px;
+    overflow: auto;
+}
+
+div.sidebar {
+    width: 300px;
+    margin-right: 80px;
+    margin-left: 80px;
+    position: fixed;
+    left: 0;
+}
+
+a:link {
+    color: #4993B3;
+    text-decoration: none;
+}
+
+a:active {
+    color: #4993B3;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #4993B3;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #9CCFE6;
+    text-decoration: none;
+}

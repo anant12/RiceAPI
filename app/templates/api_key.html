@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+
+        <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900' rel='stylesheet' type='text/css'>
+        <link href='../static/stylesheet.css' rel='stylesheet' type='text/css'>
+
+        <title>Rice API | API key generation</title>
+    </head>
+
+    <body>
+        <div class="sidebar">
+            <p class="title">Rice API</p>
+            <p class="subtitle">A JSON-based web API to make retrieving data about the university slightly less frustrating</p>
+            <br/>
+            <p class="link"><a href="#">about</a></p>
+            <p class="link"><a href="#">api key registration</a></p>
+            <p class="link"><a href="#">usage</a></p>
+            <p class="link"><a href="#">compiling from source</a></p>
+        </div>
+        <div class="content">
+            <p class="heading">API key generation</p>
+            {% if data.api_key %}
+                <p class="text_alt">You've generated an API key! You may now use this key when making requests to Rice API.</p>
+                <br/>
+                <p class="text_alt">Net ID: {{ data.net_id }}</p>
+                <p class="text_alt">API key: {{ data.api_key }}</p>
+                <br/>
+                <p class="text_alt">For instructions on how to use the API, see the <a href="/#usage">usage</a> section on the main page.</p>
+            {% else %}
+                <p class="text_alt">Click the below link to generate an API key. It will be associated with your Net ID, {{ data.net_id }}.</p>
+                <p class="text_alt"><a href="/generate_api_key">Generate API key</a></p>
+            {% endif %}
+        </div>
+    </body>
+</html>

@@ -1,3 +1,7 @@
+# DATABASE.PY
+# Handles logic related to account storage in the database.
+
+
 from app import db
 
 

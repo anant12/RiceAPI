@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+
+        <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900' rel='stylesheet' type='text/css'>
+        <link href='../static/stylesheet.css' rel='stylesheet' type='text/css'>
+        <link href='../static/prettify/sunburst.css' rel='stylesheet' type='text/css'>
+
+        <script src="../static/prettify/run_prettify.js"></script>
+
+        <title>Rice API</title>
+    </head>
+
+    <body>
+        <div class="sidebar">
+            <p class="title">Rice API</p>
+            <p class="subtitle">A JSON-based web API to make retrieving data about the university slightly less frustrating</p>
+            <br/>
+            <p class="link"><a href="#">about</a></p>
+            <p class="link"><a href="#">api key registration</a></p>
+            <p class="link"><a href="#">usage</a></p>
+            <p class="link"><a href="#">example</a></p>
+            <p class="link"><a href="#">compiling from source</a></p>
+        </div>
+        <div class="content">
+            <p class="heading">About</p>
+            <p class="text">Rice API is a tool designed to allow students and faculty easy access to publicly accessible data about the university. The current supported functionality include retrieving information about a person (e.g. a student) and retrieving a list of courses based on search criteria. Data is returned by the API in a friendly, JSON format. Anyone with a valid Rice Net ID is permitted to use the tool.</p>
+            <p class="text">This API interface was developed out of moderate frustration over the difficulty for developers to access information about the university without resorting to clumsy, line-by-line parsing of HTML data. This API does said clumsy parsing for you. You can take a look at the full source code <a href="https://www.github.com/LINKIWI/RiceAPI">here</a>.</p>
+            <br/>
+            <p class="heading">API key registration</p>
+            <p class="text">As a security measure, only Rice students and faculty (e.g. those with a valid Net ID) are permitted to use this API. Thus, the API will only respond to requests supplemented with a valid API key.</p>
+            <p class="text">To obtain an API key, simply <a href="/login">log in with your Net ID</a> and click on "Generate API key." The server will automatically generate a unique, alphanumeric API key that will be associated with your Net ID. You are permitted (theoretically) unlimited requests with your key through this application.</p>
+            <br/>
+            <p class="heading">Usage</p>
+            <p class="text">To use the API, simply execute an HTTP GET request to the following URL:</p>
+            <pre>http://api.rice.edu/api/action?key=API_KEY&amp;parameter=SOME_CRITERION</pre>
+            <p class="text">where <code>action</code> specifies the API action, as specified below, and <code>parameter</code> (of which there can be several) specifies different parameters for that action (also specified below). Only HTTP (not HTTPS) requests are currently supported.</p>
+            <p class="text">Full descriptions of parameters and actions supported by the API are detailed as follows (asterisks designate required parameters):</p>
+            <p class="subheading">Actions</p>
+            <table border="1" cellpadding="10px">
+                <tr>
+                    <td><p class="bold_text">Action</p></td>
+                    <td><p class="bold_text">Description</p></td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">people</p></td>
+                    <td>
+                        <p class="table_text">Look up information about Rice students and faculty. Data is pulled from <a href="http://fouroneone.rice.edu">fouroneone.rice.edu</a></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">courses</p></td>
+                    <td>
+                        <p class="table_text">Retrieve a list of courses matching some search criteria. Data is pulled from <a href="http://courses.rice.edu">courses.rice.edu</a></p>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <p class="subheading">Parameters - people</p>
+            <table border="1" cellpadding="10px">
+                <tr>
+                    <td><p class="bold_text">Parameter</p></td>
+                    <td><p class="bold_text">Description</p></td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">key*</p></td>
+                    <td>
+                        <p class="table_text">API key generated and authorized by this application. See <a href="#">API key registration</a>.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">net_id</p></td>
+                    <td>
+                        <p class="table_text">Executes a 411 directory lookup of the specified Net ID. If this parameter is non-null, it will override the name parameter.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">name</p></td>
+                    <td>
+                        <p class="table_text">Executes a 411 directory lookup of the specified name. The passed string can contain spaces. The contents of this parameter will be overriden if the net_id parameter is non-null.</p>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <p class="subheading">API response - people</p>
+            <table border="1" cellpadding="10px">
+                <tr>
+                    <td><p class="bold_text">Response field</p></td>
+                    <td><p class="bold_text">Description</p></td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.result</p></td>
+                    <td>
+                        <p class="table_text">"Success" or "failure" depending on whether the API request was successful or unsuccessful, respectively</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.message</p></td>
+                    <td>
+                        <p class="table_text">Error message if the API request was unsuccessful; null otherwise</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people[]</p></td>
+                    <td>
+                        <p class="table_text">List of people in search results. Can be of size 0 if no search results matched the search criteria</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people[].address</p></td>
+                    <td>
+                        <p class="table_text">Campus address of the person</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people[].college</p></td>
+                    <td>
+                        <p class="table_text">Residential college of the person</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people[].email</p></td>
+                    <td>
+                        <p class="table_text">Published Rice email address of the person</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people[].major</p></td>
+                    <td>
+                        <p class="table_text">Declared major(s) of the person</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people[].name</p></td>
+                    <td>
+                        <p class="table_text">Published name of the person, in order first middle initial last</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people[].year</p></td>
+                    <td>
+                        <p class="table_text">Class standing of the person. Based on number of credit hours, not matriculation year.</p>
+                    </td>
+                </tr>
+            </table>
+            <p class="text">Sample request:</p>
+            <pre>GET http://api.rice.edu/api/people?key=nfkv05mmalawcba6ta00mhz536denf&amp;net_id=kl38</pre>
+            <p class="text">Sample response:</p>
+            <pre>
+Content-Type: application/json
+
+{
+  "message": "null",
+  "people": [
+    {
+      "address": "Sid Richardson Coll MS-746, 6360 Main Street, , TX 77005-1847",
+      "college": "Sid Richardson College",
+      "email": "kevinlin@rice.edu",
+      "major": "Electrical Engineering, Computer Science",
+      "name": "Kevin Lin",
+      "year": "Junior"
+    }
+  ],
+  "result": "success"
+}
+            </pre>
+            <br/>
+            <p class="subheading">Parameters - courses</p>
+            <table border="1" cellpadding="10px">
+                <tr>
+                    <td><p class="bold_text">Parameter</p></td>
+                    <td><p class="bold_text">Description</p></td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">key*</p></td>
+                    <td>
+                        <p class="table_text">API key generated and authorized by this application. See <a href="#">API key registration</a>.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">term*</p></td>
+                    <td>
+                        <p class="table_text">Semester term. Acceptable inputs are "Fall," "Spring," and "Summer."</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">year*</p></td>
+                    <td>
+                        <p class="table_text">Year corresponding to the semester term, e.g., "2015"</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">code</p></td>
+                    <td>
+                        <p class="table_text">Course code, e.g., "ELEC 241" or "241"</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">title</p></td>
+                    <td>
+                        <p class="table_text">Title of the course, e.g., "Fund Electrical Engineering I." It is not recommended to use this search option, since courses.rice.edu only returns results for exact matches (e.g. "Fundamentals of Electrical Engineering I" will return no results, but "Fund Electrical Engineering I" will)</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">instructor</p></td>
+                    <td>
+                        <p class="table_text">Name(s) of the course instructor(s). It is not recommended to use this search option for the same reason as above.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">subject</p></td>
+                    <td>
+                        <p class="table_text">Four-letter subject code, e.g., "ELEC"</p>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <p class="subheading">API response - courses</p>
+            <table border="1" cellpadding="10px">
+                <tr>
+                    <td><p class="bold_text">Response field</p></td>
+                    <td><p class="bold_text">Description</p></td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.result</p></td>
+                    <td>
+                        <p class="table_text">"Success" or "failure" depending on whether the API request was successful or unsuccessful, respectively</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.message</p></td>
+                    <td>
+                        <p class="table_text">Error message if the API request was unsuccessful; null otherwise</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.courses[]</p></td>
+                    <td>
+                        <p class="table_text">List of courses in search results. Can be of size 0 if no search results matched the search criteria</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.courses[].code</p></td>
+                    <td>
+                        <p class="table_text">Course code in the format subject code section, e.g., "ELEC 241 001"</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.courses[].credits</p></td>
+                    <td>
+                        <p class="table_text">Number of credits of the course</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.courses[].instructor</p></td>
+                    <td>
+                        <p class="table_text">Name of the instructor(s) of the course, in format last, first</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.courses[].length</p></td>
+                    <td>
+                        <p class="table_text">Description of the length of the course</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.courses[].number</p></td>
+                    <td>
+                        <p class="table_text">Course number</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.courses[].time</p></td>
+                    <td>
+                        <p class="table_text">Scheduled meeting time(s) of the course. Format start time - end time days, where the start and end times are 12-hours string representations of the time, and days is a one or two-letter abbreviation of the day of the week.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.courses[].title</p></td>
+                    <td>
+                        <p class="table_text">Course title</p>
+                    </td>
+                </tr>
+            </table>
+            <p class="text">Sample request:</p>
+            <pre>GET http://api.rice.edu/api/courses?key=nfkv05mmalawcba6ta00mhz536denf&amp;term=spring&amp;year=2015&amp;code=MATH 212</pre>
+            <p class="text">Sample response:</p>
+            <pre>
+Content-Type: application/json
+
+{
+  "courses": [
+    {
+      "code": "MATH 212 001",
+      "credits": "3",
+      "instructor": "Shadrach, Richard H.",
+      "length": "Full Term",
+      "number": "20197",
+      "time": "09:00AM - 09:50AM MWF",
+      "title": "MULTIVARIABLE CALCULUS"
+    },
+    {
+      "code": "MATH 212 002",
+      "credits": "3",
+      "instructor": "Tanimoto, Sho",
+      "length": "Full Term",
+      "number": "20198",
+      "time": "11:00AM - 11:50AM MWF",
+      "title": "MULTIVARIABLE CALCULUS"
+    },
+    {
+      "code": "MATH 212 003",
+      "credits": "3",
+      "instructor": "Kiselev, Alexander",
+      "length": "Full Term",
+      "number": "20580",
+      "time": "09:25AM - 10:40AM TR",
+      "title": "MULTIVARIABLE CALCULUS"
+    },
+    ...
+  ],
+  "message": "null",
+  "result": "success"
+}
+            </pre>
+            <br/>
+            <p class="heading">Example</p>
+            <p class="text">test</p>
+            <br/>
+            <p class="heading">Compiling from source</p>
+            <p class="text">test</p>
+            <br/>
+            <br/>
+            <p class="footer">Rice API was developed by <a href="http://www.kevinlin.info">Kevin Lin</a>, ELEC/CS '18</p>
+        </div>
+    </body>
+</html>
