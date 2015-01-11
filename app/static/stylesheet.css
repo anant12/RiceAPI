@@ -105,6 +105,7 @@ div.content {
     margin-left: 480px;
     margin-right: 400px;
     overflow: auto;
+	min-width: 400px;
 }
 
 div.sidebar {
