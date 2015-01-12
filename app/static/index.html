@@ -39,6 +39,7 @@
             <p class="link"><a href="#about">about</a></p>
             <p class="link"><a href="#api">api key registration</a></p>
             <p class="link"><a href="#usage">usage</a></p>
+            <p class="link"><a href="#example">example</a></p>
             <p class="link"><a href="#source">compiling from source</a></p>
             <br/><br/>
             <a href="https://www.github.com/LINKIWI/RiceAPI"><img src="static/github.png" width="30px" height="30px" /></a>
@@ -107,6 +108,7 @@
             </table>
             <br/>
             <p class="subheading">API response - people</p>
+            <p class="text">The API separates people search results into students and faculty.</p>
             <table border="1" cellpadding="10px">
                 <tr>
                     <td><p class="bold_text">Response field</p></td>
@@ -125,45 +127,81 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><p class="table_text">response.people[]</p></td>
+                    <td><p class="table_text">response.people</p></td>
                     <td>
                         <p class="table_text">List of people in search results. Can be of size 0 if no search results matched the search criteria</p>
                     </td>
                 </tr>
                 <tr>
-                    <td><p class="table_text">response.people[].address</p></td>
+                    <td><p class="table_text">response.people.students[].address</p></td>
                     <td>
                         <p class="table_text">Campus address of the person</p>
                     </td>
                 </tr>
                 <tr>
-                    <td><p class="table_text">response.people[].college</p></td>
+                    <td><p class="table_text">response.people.students[].college</p></td>
                     <td>
                         <p class="table_text">Residential college of the person</p>
                     </td>
                 </tr>
                 <tr>
-                    <td><p class="table_text">response.people[].email</p></td>
+                    <td><p class="table_text">response.people.students[].email</p></td>
                     <td>
                         <p class="table_text">Published Rice email address of the person</p>
                     </td>
                 </tr>
                 <tr>
-                    <td><p class="table_text">response.people[].major</p></td>
+                    <td><p class="table_text">response.people.students[].major</p></td>
                     <td>
                         <p class="table_text">Declared major(s) of the person</p>
                     </td>
                 </tr>
                 <tr>
-                    <td><p class="table_text">response.people[].name</p></td>
+                    <td><p class="table_text">response.people.students[].name</p></td>
                     <td>
                         <p class="table_text">Published name of the person, in order first middle initial last</p>
                     </td>
                 </tr>
                 <tr>
-                    <td><p class="table_text">response.people[].year</p></td>
+                    <td><p class="table_text">response.people.students[].year</p></td>
                     <td>
                         <p class="table_text">Class standing of the person. Based on number of credit hours, not matriculation year.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people.faculty[].department</p></td>
+                    <td>
+                        <p class="table_text">Department of the person</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people.faculty[].email</p></td>
+                    <td>
+                        <p class="table_text">Published Rice email address of the person</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people.faculty[].mailstop</p></td>
+                    <td>
+                        <p class="table_text">Campus mailstop code of the person</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people.faculty[].office</p></td>
+                    <td>
+                        <p class="table_text">Campus office location of the person</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people.faculty[].phone</p></td>
+                    <td>
+                        <p class="table_text">Campus phone number of the person</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.people.faculty[].website</p></td>
+                    <td>
+                        <p class="table_text">Website URL of the faculty member</p>
                     </td>
                 </tr>
             </table>
@@ -175,16 +213,19 @@ Content-Type: application/json
 
 {
   "message": "null",
-  "people": [
-    {
-      "address": "Sid Richardson Coll MS-746, 6360 Main Street, , TX 77005-1847",
-      "college": "Sid Richardson College",
-      "email": "kevinlin@rice.edu",
-      "major": "Electrical Engineering, Computer Science",
-      "name": "Kevin Lin",
-      "year": "Junior"
-    }
-  ],
+  "people": {
+    "students": [
+      {
+        "address": "Sid Richardson Coll MS-746, 6360 Main Street, , TX 77005-1847",
+        "college": "Sid Richardson College",
+        "email": "kevinlin@rice.edu",
+        "major": "Electrical Engineering, Computer Science",
+        "name": "Kevin Lin",
+        "year": "Junior"
+      }
+    ],
+    "faculty": []
+  }
   "result": "success"
 }
             </pre>
@@ -346,6 +387,28 @@ Content-Type: application/json
   "message": "null",
   "result": "success"
 }
+            </pre>
+            <br/>
+            <a name="example"></a>
+            <p class="heading">Example</p>
+            <p class="text">The below example is a simple, sample application of Rice API in a Java-like language.</p>
+            <pre>
+// Assume name and apiKey are initialized earlier
+String apiResponseString = outputOfHTTPRequest("http://api.rice.edu/api/people?key=" + apiKey + "&name=" + name);
+// Not a real method; use your own preferred way of submitting an HTTP request
+JSONObject apiResponse = new JSONObject(apiResponseString);
+if (apiResponse.getString("result").equals("success")) {
+  JSONArray students = apiResponse.getJSONObject("people").getJSONArray("students");
+  System.out.println("Search results for " + name);
+  for (int i = 0; i < students.length(); i++) {
+    System.out.println("Name: " + students[i].getString("name"))
+    System.out.println("Year: " + students[i].getString("year"))
+    System.out.println("Major(s): " + students[i].getString("major"))
+    System.out.println("College: " + students[i].getString("college"))
+  }
+}
+else
+  System.out.println("An error was encountered: " + apiResponse.getString("message"))
             </pre>
             <br/>
             <a name="source"></a>

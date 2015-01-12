@@ -40,48 +40,85 @@ def people_api():
     data = urllib2.urlopen(url)
 
     # Parsing HTML data like this is highly unpredictable. Thus, a bunch of try-excepts:
-    people = []
-    person = {"name": None, "year": None, "college": None, "major": None, "address": None, "email": None}
+    students, faculty = [], []
     for line in data.readlines()[200:]:
         if "name: " in line:
             try:
                 name_list = line.strip().lstrip("name: <b>").rstrip(">b/<").split(", ")
-                person["name"] = name_list[1] + " " + name_list[0]
+                name = name_list[1] + " " + name_list[0]
             except:
                 pass
         if "class: " in line:
             try:
-                person["year"] = line.strip()[7:].split()[0].capitalize()
+                year = line.strip()[7:].split()[0].capitalize()
             except:
                 pass
         if "college: " in line:
             try:
-                person["college"] = line.strip()[9:]
+                college = line.strip()[9:]
             except:
                 pass
         if "major: " in line:
             try:
-                person["major"] = line.strip()[7:]
+                major = line.strip()[7:]
             except:
                 pass
         if "address: " in line:
             try:
-                person["address"] = line.strip()[9:]
+                address = line.strip()[9:]
+            except:
+                pass
+        if "department: " in line:
+            try:
+                department = line.strip()[12:]
+            except:
+                pass
+        if "title: " in line:
+            try:
+                title = line.strip()[7:]
+            except:
+                pass
+        if "mailstop: " in line:
+            try:
+                mailstop = line.strip()[10:]
+            except:
+                pass
+        if "office: " in line:
+            try:
+                office = line.strip()[8:]
+            except:
+                pass
+        if "phone: " in line:
+            try:
+                phone = line.strip()[7:]
+            except:
+                pass
+        if "homepage: " in line:
+            try:
+                temp = line.strip()[26:]
+                website = temp[:temp.index("'")]
             except:
                 pass
         if "email: " in line:
             try:
                 temp = line.strip()[23:]
-                person["email"] = temp[:temp.index("'")]
+                email = temp[:temp.index("'")]
                 # Email is the last field, so add this new person to the list at this point
-                people.append(person)
-                person = dict({"name": None, "year": None, "college": None, "major": None, "address": None})
+                if year.lower() == "staff" or year.lower() == "faculty":
+                    faculty.append(dict({"name": name, "department": department, "title": title, "mailstop": mailstop, "office": office, "phone": phone, "website": website, "email": email}))
+                else:
+                    students.append(dict({"name": name, "year": year, "college": college, "major": major, "address": address}))
+                # Reset all variables to null
+                name, year, department, title, mailstop, office, phone, website, email, college, major, address = (None, None, None, None, None, None, None, None, None, None, None, None)
             except:
                 pass
     json = {
         "result": "success",
         "message": "null",
-        "people": people
+        "people": {
+            "students": students,
+            "faculty": faculty
+        }
     }
     return flask.jsonify(**json)
 
