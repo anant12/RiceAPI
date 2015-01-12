@@ -5,10 +5,15 @@
 
         <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900' rel='stylesheet' type='text/css'>
         <link href='../static/stylesheet.css' rel='stylesheet' type='text/css'>
-        <link href='../static/prettify/sunburst.css' rel='stylesheet' type='text/css'>
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script src="../static/prettify/run_prettify.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="http://balupton.github.com/jquery-syntaxhighlighter/scripts/jquery.syntaxhighlighter.min.js"></script>
+
+        <script type="text/javascript">
+				$.SyntaxHighlighter.init({
+					'wrapLines':false
+				});
+		</script>
 
         <title>Rice API</title>
 
@@ -391,24 +396,43 @@ Content-Type: application/json
             <br/>
             <a name="example"></a>
             <p class="heading">Example</p>
-            <p class="text">The below example is a simple, sample application of Rice API in a Java-like language.</p>
+            <p class="text">The below example is a simple, sample application of Rice API in Python. Any language that supports JSON parsing can use Rice API.</p>
+            <pre class="language-python highlight">
+import urllib2
+import json
+
+api_key = "YOUR_API_KEY_HERE"
+name = "Kylie"
+
+# Get the JSON response from the server
+apiResponseString = urllib2.urlopen("http://api.rice.edu/api/people?key=" + api_key + "&name=" + name).read()
+apiResponse = json.loads(apiResponseString)
+
+# Do something useful with it
+if apiResponse["result"] == "success":
+    students = apiResponse["people"]["students"]
+    print "List of search results for criteria", name, "\n"
+    for student in students:
+        print "Name:", student["name"]
+        print "Major:", student["major"]
+        print "Year:", student["year"]
+        print "College:", student["college"], "\n"
+else:
+    print "An error was encountered:", apiResponse["message"]
+            </pre>
+            <p class="text">The console output is as follows:</p>
             <pre>
-// Assume name and apiKey are initialized earlier
-String apiResponseString = outputOfHTTPRequest("http://api.rice.edu/api/people?key=" + apiKey + "&name=" + name);
-// Not a real method; use your own preferred way of submitting an HTTP request
-JSONObject apiResponse = new JSONObject(apiResponseString);
-if (apiResponse.getString("result").equals("success")) {
-  JSONArray students = apiResponse.getJSONObject("people").getJSONArray("students");
-  System.out.println("Search results for " + name);
-  for (int i = 0; i < students.length(); i++) {
-    System.out.println("Name: " + students[i].getString("name"))
-    System.out.println("Year: " + students[i].getString("year"))
-    System.out.println("Major(s): " + students[i].getString("major"))
-    System.out.println("College: " + students[i].getString("college"))
-  }
-}
-else
-  System.out.println("An error was encountered: " + apiResponse.getString("message"))
+List of search results for criteria Kylie
+
+Name: Kylie Megan Balotin
+Major: Engineering Division
+Year: Junior
+College: Baker College
+
+Name: Kylie Sierra Burgess
+Major: Natural Sciences Division
+Year: Freshman
+College: Hanszen College
             </pre>
             <br/>
             <a name="source"></a>

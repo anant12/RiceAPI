@@ -104,7 +104,8 @@ p.link {
 div.content {
     margin-left: 480px;
     margin-right: 400px;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 	min-width: 400px;
 }
 
