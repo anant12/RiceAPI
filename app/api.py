@@ -41,6 +41,7 @@ def people_api():
 
     # Parsing HTML data like this is highly unpredictable. Thus, a bunch of try-excepts:
     students, faculty = [], []
+    name, year, department, title, mailstop, office, phone, website, email, college, major, address = (None, None, None, None, None, None, None, None, None, None, None, None)
     for line in data.readlines()[200:]:
         if "name: " in line:
             try:
