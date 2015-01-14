@@ -12,7 +12,7 @@ This API interface was developed out of moderate frustration over the difficulty
 ## API Key Registration
 As a security measure, only Rice students and faculty (e.g. those with a valid Net ID) are permitted to use this API. Thus, the API will only respond to requests supplemented with a valid API key.
 
-To obtain an API key, simply log in with your Net ID and click on "Generate API key." The server will automatically generate a unique, alphanumeric API key that will be associated with your Net ID. You are permitted (theoretically) unlimited requests with your key through this application.
+To obtain an API key, [simply log in with your Net ID](http://api.rice.edu/login) and click on "Generate API key." The server will automatically generate a unique, alphanumeric API key that will be associated with your Net ID. You are permitted (theoretically) unlimited requests with your key through this application.
 
 ## Usage
 To use the API, simply execute an HTTP GET request to the following URL:
@@ -159,10 +159,10 @@ Content-Type: application/json
 You are welcome to compile this application from source and run it locally. In order to do so, you must meet the following requirements:
 
 * Python 2.7
-* Flask (via pip install flask)
-* Flask-CAS (via pip install flask-cas)
-* Flask-SQLAlchemy (via pip install flask-sqlalchemy)
-* BeautifulSoup (via pip install beautifulsoup4)
+* Flask (via `pip install flask`)
+* Flask-CAS (via `pip install flask-cas`)
+* Flask-SQLAlchemy (via `pip install flask-sqlalchemy`)
+* BeautifulSoup (via `pip install beautifulsoup4`)
 
 First, grab the full source code from Github. After cloning the repository or unzipping its contents locally, you must first create the SQLite database storing Net IDs and API keys:
 
