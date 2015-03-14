@@ -11,3 +11,4 @@ CAS(app)
 app.config.setdefault('CAS_USERNAME_SESSION_KEY', 'CAS_USERNAME')
 
 from app import api, account, database, views
+import locations
