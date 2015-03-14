@@ -7,8 +7,8 @@ import collections
 
 from flask import request, jsonify
 
-from app import app
-from app.database import User
+from app import app, db
+from app.database import User, Reservation
 import config
 
 from bs4 import BeautifulSoup
@@ -212,11 +212,13 @@ def courses_api():
 @app.route('/api/fondren')
 def fondren_api():
     """
-    API interface for Fondren reservation system
+    Function selector for API interface for Fondren reservation system. First validates passed parameters, then
+    calls either the database version or the live version of the reservation API.
     """
     # Parameters from URL
     api_key = request.args.get("key", "")
     filter_room = request.args.get("room", "")
+    live = request.args.get("live", "").lower() == "true"
 
     # Initial error handling
     # Check valid API key
@@ -229,6 +231,84 @@ def fondren_api():
         except:
             return error("Invalid room number " + filter_room)
 
+    # Choose whether to use the cached results or get live results
+    return fondren_api_live(filter_room) if live else fondren_api_database(filter_room)
+
+
+def fondren_api_live(filter_room):
+    """
+    API interface for Fondren reservation system. Retrieves data live from Fondren. Prohibitively slow, hence
+    the reason for the database caching.
+    """
+    # Get the live data
+    reservation_data = get_all_reservation_data()
+
+    # Filter results if room parameter is non-null
+    if len(filter_room) > 0:
+        for room in dict(reservation_data["rooms"]):
+            print str(room), str(filter_room), str(room) != str(filter_room)
+            if str(room) != str(filter_room):
+                del reservation_data["rooms"][room]
+
+    return jsonify(reservation_data)
+
+
+def fondren_api_database(filter_room):
+    """
+    Database cached version of the API. Fast!
+    """
+    result = collections.defaultdict(dict)
+    # Query the database, format strings accordingly, and JSON-ify everything
+    for room in Reservation.query.all():
+        times = {}
+        for date_and_availability in room.availability.split("|"):
+            if len(date_and_availability) > 0:
+                times[date_and_availability[:10]] = [time for time in date_and_availability[11:].split(";") if len(time) > 0]
+        result[room.room_number]["available_times"] = dict(times)
+        result[room.room_number]["description"] = room.description
+
+    # Assemble JSON to return
+    json = {
+        "message": None,
+        "result": "success",
+        "rooms": dict(result)
+    }
+
+    # Filter results if room parameter is non-null
+    if len(filter_room) > 0:
+        for room in dict(json["rooms"]):
+            print str(room), str(filter_room), str(room) != str(filter_room)
+            if str(room) != str(filter_room):
+                del json["rooms"][room]
+
+    return jsonify(json)
+
+
+@app.route('/update')
+def update_fondren_database():
+    """
+    Updates the database with the latest reservation times.
+    """
+    # Get live data
+    reservation_data = get_all_reservation_data()
+    # Delete current rows in table (they're being updated right now)
+    Reservation.query.delete()
+    # Add new data into database
+    for room in reservation_data["rooms"]:
+        availability = ""
+        for date in reservation_data["rooms"][room]["available_times"]:
+            # Availability string format: date:time;time;time;|date:time;time;...
+            availability += date + ":" + "".join([time + ";" for time in reservation_data["rooms"][room]["available_times"][date]]) + "|"
+        db.session.add(Reservation(int(room), reservation_data["rooms"][room]["description"], availability))
+    db.session.commit()
+    return "Update success"
+
+
+def get_all_reservation_data():
+    """
+    Gets all reservation data for the next three days from Fondren's room reservation system and
+    returns it as a dictionary, for both live presentation and storage in a database
+    """
     # Soup the reservation system page
     soup = BeautifulSoup(urllib2.urlopen("https://rooms.library.rice.edu/Web/view-schedule.php?&sfw=1").read())
 
@@ -251,19 +331,13 @@ def fondren_api():
         end = reservable.find_all("input", {"class": "end"})[0].attrs["value"]  # End time of available reservation
         # Trim and format elements as necessary
         room_id = int(room_id[20:room_id.index("&")])
-        date = map(int, start[0:start.index("%")].split("-"))
-        formatted_date = str(date[1]) + "-" + str(date[2]) + "-" + str(date[0])
+        date = map(str, start[0:start.index("%")].split("-"))
+        formatted_date = date[1] + "-" + date[2] + "-" + date[0]
         start = str(start[13:-2].replace("%3A", ""))
         end = end[13:-2].replace("%3A", "")
         # Add to result dictionary
         result[rooms[room_id]["number"]]["description"] = rooms[room_id]["description"]
         result[rooms[room_id]["number"]]["available_times"][formatted_date].append(start)
-
-    # Filter results if room parameter is non-null
-    if len(filter_room) > 0:
-        for room in dict(result):
-            if int(room) != int(filter_room):
-                del result[room]
 
     # Assemble JSON to return
     json = {
@@ -272,8 +346,7 @@ def fondren_api():
         "rooms": dict(result)
     }
 
-    return jsonify(json)
-
+    return json
 
 
 def is_api_key_valid(api_key):

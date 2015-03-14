@@ -18,3 +18,21 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.net_id
+
+
+class Reservation(db.Model):
+    """
+    Model representing cached Fondren reservation information.
+    Used for faster API response
+    """
+    room_number = db.Column(db.Integer, primary_key=True, unique=True, index=True)
+    description = db.Column(db.String(120))
+    availability = db.Column(db.String)
+
+    def __init__(self, room_number, description, availability):
+        self.room_number = room_number
+        self.description = description
+        self.availability = availability
+
+    def __repr__(self):
+        return '<Reservation %r>' % self.room_number
