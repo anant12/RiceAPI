@@ -63,7 +63,7 @@
             <a name="usage"></a>
             <p class="heading">Usage</p>
             <p class="text">To use the API, simply execute an HTTP GET request to the following URL:</p>
-            <pre>http://api.rice.edu/api/action?key=API_KEY&amp;parameter=SOME_CRITERION</pre>
+            <pre>http://api.riceapps.org/api/action?key=API_KEY&amp;parameter=SOME_CRITERION</pre>
             <p class="text">where <code>action</code> specifies the API action, as specified below, and <code>parameter</code> (of which there can be several) specifies different parameters for that action (also specified below). Only HTTP (not HTTPS) requests are currently supported.</p>
             <p class="text">Full descriptions of parameters and actions supported by the API are detailed as follows (asterisks designate required parameters):</p>
             <p class="subheading">Actions</p>
@@ -211,7 +211,7 @@
                 </tr>
             </table>
             <p class="text">Sample request:</p>
-            <pre>GET http://api.rice.edu/api/people?key=nfkv05mmalawcba6ta00mhz536denf&amp;net_id=kl38</pre>
+            <pre>GET http://api.riceapps.org/api/people?key=nfkv05mmalawcba6ta00mhz536denf&amp;net_id=kl38</pre>
             <p class="text">Sample response:</p>
             <pre>
 Content-Type: application/json
@@ -353,7 +353,7 @@ Content-Type: application/json
                 </tr>
             </table>
             <p class="text">Sample request:</p>
-            <pre>GET http://api.rice.edu/api/courses?key=nfkv05mmalawcba6ta00mhz536denf&amp;term=spring&amp;year=2015&amp;code=MATH 212</pre>
+            <pre>GET http://api.riceapps.org/api/courses?key=nfkv05mmalawcba6ta00mhz536denf&amp;term=spring&amp;year=2015&amp;code=MATH 212</pre>
             <p class="text">Sample response:</p>
             <pre>
 Content-Type: application/json
@@ -405,7 +405,7 @@ api_key = "YOUR_API_KEY_HERE"
 name = "Kylie"
 
 # Get the JSON response from the server
-apiResponseString = urllib2.urlopen("http://api.rice.edu/api/people?key=" + api_key + "&name=" + name).read()
+apiResponseString = urllib2.urlopen("http://api.riceapps.org/api/people?key=" + api_key + "&name=" + name).read()
 apiResponse = json.loads(apiResponseString)
 
 # Do something useful with it
@@ -458,7 +458,7 @@ College: Hanszen College
             <pre>http://localhost:5000/</pre>
             <p class="text">All functionality is identical sans the URL. The same rules regarding parameters and API keys still apply.</p>
             <br/><br/><br/>
-            <p class="footer">Rice API was developed by <a href="http://www.kevinlin.info">Kevin Lin</a>, ELEC/CS '18</p>
+            <p class="footer">Rice API was developed by <a href="http://www.kevinlin.info">Kevin Lin</a>, ELEC/CS '18, and is now maintained by <a href="http://riceapps.org/">Rice Apps</a></p>
         </div>
     </body>
 </html>

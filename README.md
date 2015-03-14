@@ -12,12 +12,12 @@ This API interface was developed out of moderate frustration over the difficulty
 ## API Key Registration
 As a security measure, only Rice students and faculty (e.g. those with a valid Net ID) are permitted to use this API. Thus, the API will only respond to requests supplemented with a valid API key.
 
-To obtain an API key, [simply log in with your Net ID](http://api.rice.edu/login) and click on "Generate API key." The server will automatically generate a unique, alphanumeric API key that will be associated with your Net ID. You are permitted (theoretically) unlimited requests with your key through this application.
+To obtain an API key, [simply log in with your Net ID](http://api.riceapps.org/login) and click on "Generate API key." The server will automatically generate a unique, alphanumeric API key that will be associated with your Net ID. You are permitted (theoretically) unlimited requests with your key through this application.
 
 ## Usage
 To use the API, simply execute an HTTP GET request to the following URL:
 
-`http://api.rice.edu/api/action?key=API_KEY&parameter=SOME_CRITERION`
+`http://api.riceapps.org/api/action?key=API_KEY&parameter=SOME_CRITERION`
 
 where `action` specifies the API action, as specified below, `key` is your API key (required for all requests), and `parameter` (of which there can be several) specifies different parameters for that action (also specified below). Only HTTP (not HTTPS) requests are currently supported.
 
@@ -59,7 +59,7 @@ The API separates people search results into students and faculty.
 
 Sample request:
 ```
-GET http://api.rice.edu/api/people?key=nfkv05mmalawcba6ta00mhz536denf&net_id=kl38
+GET http://api.riceapps.org/api/people?key=nfkv05mmalawcba6ta00mhz536denf&net_id=kl38
 ```
 
 Sample response:
@@ -112,7 +112,7 @@ Content-Type: application/json
 
 Sample request:
 ```
-GET http://api.rice.edu/api/courses?key=nfkv05mmalawcba6ta00mhz536denf&term=spring&year=2015&code=MATH 212
+GET http://api.riceapps.org/api/courses?key=nfkv05mmalawcba6ta00mhz536denf&term=spring&year=2015&code=MATH 212
 ```
 
 Sample response:
