@@ -59,7 +59,6 @@ def fondren_api_live(filter_room):
     # Filter results if room parameter is non-null
     if len(filter_room) > 0:
         for room in dict(reservation_data["rooms"]):
-            print str(room), str(filter_room), str(room) != str(filter_room)
             if str(room) != str(filter_room):
                 del reservation_data["rooms"][room]
 
@@ -178,10 +177,10 @@ def get_open_hours():
     days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     hours = {day: {"open": None, "close": None, "24_hours": False} for day in days}
     for i in range(len(days)):
-        if "open" in data[i].lower():
+        if "open at" in data[i].lower():
             hours[days[i]]["open"] = data[i].lstrip("Open at")
             hours[days[i]]["close"] = "12am"
-        elif "close" in data[i].lower():
+        elif "close at" in data[i].lower():
             hours[days[i]]["open"] = "12am"
             hours[days[i]]["close"] = data[i].lstrip("Close at")
         elif "to" in data[i].lower():
@@ -191,6 +190,8 @@ def get_open_hours():
         elif "24hours" in data[i].lower():
             hours[days[i]]["open"] = hours[days[i]]["close"] = "12am"
             hours[days[i]]["24_hours"] = True
+        elif "closed" in data[i].lower():
+            hours[days[i]]["open"] = hours[days[i]]["close"] = "closed"
         else:
             hours[days[i]]["open"] = hours[days[i]]["close"] = "Error - contact Kevin (kevinlin@rice.edu)"
 
