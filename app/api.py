@@ -3,9 +3,9 @@
 
 
 import urllib2
+import collections
 
-from flask import request
-import flask
+from flask import request, jsonify
 
 from app import app
 from app.database import User
@@ -121,7 +121,7 @@ def people_api():
             "faculty": faculty
         }
     }
-    return flask.jsonify(**json)
+    return jsonify(json)
 
 
 @app.route('/api/courses')
@@ -206,7 +206,73 @@ def courses_api():
         "message": "null",
         "courses": courses
     }
-    return flask.jsonify(**json)
+    return jsonify(json)
+
+
+@app.route('/api/fondren')
+def fondren_api():
+    """
+    API interface for Fondren reservation system
+    """
+    # Parameters from URL
+    api_key = request.args.get("key", "")
+    filter_room = request.args.get("room", "")
+
+    # Initial error handling
+    # Check valid API key
+    if not is_api_key_valid(api_key):
+        return error("Invalid or unauthorized API key")
+    # Check valid (int-castable) year
+    if len(filter_room) > 0:
+        try:
+            int(filter_room)
+        except:
+            return error("Invalid room number " + filter_room)
+
+    # Soup the reservation system page
+    soup = BeautifulSoup(urllib2.urlopen("https://rooms.library.rice.edu/Web/view-schedule.php?&sfw=1").read())
+
+    # Get all room ID's and descriptions and room numbers
+    rooms = collections.defaultdict(dict)  # {id: room # (int)}
+    for room in soup.find_all("a", {"class": "resourceNameSelector"}):
+        rooms[int(room.attrs["resourceid"])]["description"] = str(room.contents[0])
+        rooms[int(room.attrs["resourceid"])]["number"] = int(str(room.contents[0])[5:8])
+
+    # Begin constructing reservation dictionary
+    result = collections.defaultdict(dict)
+    # Take care of Python-specific dictionary things
+    for room in rooms:
+        result[rooms[room]["number"]]["available_times"] = collections.defaultdict(list)
+    # Iterate through all HTMl elements with the "reservable" class
+    for reservable in soup.find_all("td", {"class": "reservable clickres slot"}):
+        # Get HTML elements
+        room_id = reservable.find_all("input", {"class": "href"})[0].attrs["value"]  # Room ID
+        start = reservable.find_all("input", {"class": "start"})[0].attrs["value"]  # Start time of available reservation
+        end = reservable.find_all("input", {"class": "end"})[0].attrs["value"]  # End time of available reservation
+        # Trim and format elements as necessary
+        room_id = int(room_id[20:room_id.index("&")])
+        date = map(int, start[0:start.index("%")].split("-"))
+        formatted_date = str(date[1]) + "-" + str(date[2]) + "-" + str(date[0])
+        start = str(start[13:-2].replace("%3A", ""))
+        end = end[13:-2].replace("%3A", "")
+        # Add to result dictionary
+        result[rooms[room_id]["number"]]["description"] = rooms[room_id]["description"]
+        result[rooms[room_id]["number"]]["available_times"][formatted_date].append(start)
+
+    # Filter results if room parameter is non-null
+    if len(filter_room) > 0:
+        for room in dict(result):
+            if int(room) != int(filter_room):
+                del result[room]
+
+    # Assemble JSON to return
+    json = {
+        "message": None,
+        "result": "success",
+        "rooms": dict(result)
+    }
+
+    return jsonify(json)
 
 
 
@@ -227,4 +293,4 @@ def error(message):
         "result": "failure",
         "message": message
     }
-    return flask.jsonify(**json)
+    return jsonify(json)
