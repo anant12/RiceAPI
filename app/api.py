@@ -284,7 +284,7 @@ def fondren_api_database(filter_room):
     return jsonify(json)
 
 
-@app.route('/update')
+@app.route('/api/fondren/update')
 def update_fondren_database():
     """
     Updates the database with the latest reservation times.
