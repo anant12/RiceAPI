@@ -44,6 +44,7 @@
             <p class="link"><a href="#about">about</a></p>
             <p class="link"><a href="#api">api key registration</a></p>
             <p class="link"><a href="#usage">usage</a></p>
+            <p class="link"><a href="#reference">api reference</a></p>
             <p class="link"><a href="#example">example</a></p>
             <p class="link"><a href="#source">compiling from source</a></p>
             <br/><br/>
@@ -84,9 +85,24 @@
                         <p class="table_text">Retrieve a list of courses matching some search criteria. Data is pulled from <a href="http://courses.rice.edu">courses.rice.edu</a></p>
                     </td>
                 </tr>
+                <tr>
+                    <td><p class="table_text">library/rooms</p></td>
+                    <td>
+                        <p class="table_text">Gets details on the times that each study room is available for reservation. Data is pulled from <a href="http://library.rice.edu">library.rice.edu</a></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">library/hours</p></td>
+                    <td>
+                        <p class="table_text">Gets live details on Fondren's open hours for this week. Data is pulled from <a href="http://library.rice.edu">library.rice.edu</a></p>
+                    </td>
+                </tr>
             </table>
-            <br/>
-            <p class="subheading">Parameters - people</p>
+            <br/><br/>
+            <a name="reference"></a>
+            <p class="heading">API reference</p>
+            <p class="subheading">People API</p>
+            <p class="subheading2">Parameters</p>
             <table border="1" cellpadding="10px">
                 <tr>
                     <td><p class="bold_text">Parameter</p></td>
@@ -107,12 +123,12 @@
                 <tr>
                     <td><p class="table_text">name</p></td>
                     <td>
-                        <p class="table_text">Executes a 411 directory lookup of the specified name. The passed string can contain spaces. The contents of this parameter will be overriden if the net_id parameter is non-null.</p>
+                        <p class="table_text">Executes a 411 directory lookup of the specified name. The passed string can contain spaces. The contents of this parameter will be overridden if the net_id parameter is non-null.</p>
                     </td>
                 </tr>
             </table>
             <br/>
-            <p class="subheading">API response - people</p>
+            <p class="subheading2">Response</p>
             <p class="text">The API separates people search results into students and faculty.</p>
             <table border="1" cellpadding="10px">
                 <tr>
@@ -235,7 +251,8 @@ Content-Type: application/json
 }
             </pre>
             <br/>
-            <p class="subheading">Parameters - courses</p>
+            <p class="subheading">Courses API</p>
+            <p class="subheading2">Parameters</p>
             <table border="1" cellpadding="10px">
                 <tr>
                     <td><p class="bold_text">Parameter</p></td>
@@ -285,7 +302,7 @@ Content-Type: application/json
                 </tr>
             </table>
             <br/>
-            <p class="subheading">API response - courses</p>
+            <p class="subheading2">Response</p>
             <table border="1" cellpadding="10px">
                 <tr>
                     <td><p class="bold_text">Response field</p></td>
@@ -394,6 +411,225 @@ Content-Type: application/json
 }
             </pre>
             <br/>
+            <p class="subheading">Library API</p>
+            <p class="subheading2">Parameters - api/library/rooms</p>
+            <table border="1" cellpadding="10px">
+                <tr>
+                    <td><p class="bold_text">Parameter</p></td>
+                    <td><p class="bold_text">Description</p></td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">key*</p></td>
+                    <td>
+                        <p class="table_text">API key generated and authorized by this application. See <a href="#api">API key registration</a>.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">room</p></td>
+                    <td>
+                        <p class="table_text">The room for which reservation details should be retrieved. If this parameter is omitted, the API will return data for all rooms.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">live</p></td>
+                    <td>
+                        <p class="table_text">By default, the API returns reservation data cached in a local database that is automatically and periodically updated with the latest room reservation data.* Set this parameter to true to force the API to query Fondren's reservation system directly to get live data. (It is highly recommended to omit this parameter or set it to false because querying Fondren directly is very slow.)</p>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <p class="table_text">*To manually request the server to update the database of reservation data, simply execute a GET request (no authorization necessary) to <a href="http://api.riceapps.org/library/rooms/update">http://api.riceapps.org/library/rooms/update</a>.</p>
+            <br/>
+            <p class="subheading2">Response - api/library/rooms</p>
+            <table border="1" cellpadding="10px">
+                <tr>
+                    <td><p class="bold_text">Response field</p></td>
+                    <td><p class="bold_text">Description</p></td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.result</p></td>
+                    <td>
+                        <p class="table_text">"Success" or "failure" depending on whether the API request was successful or unsuccessful, respectively</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.message</p></td>
+                    <td>
+                        <p class="table_text">Error message if the API request was unsuccessful; null otherwise</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.rooms</p></td>
+                    <td>
+                        <p class="table_text">List of rooms with reservation data</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.rooms.description</p></td>
+                    <td>
+                        <p class="table_text">Description of the study room, i.e. "Room 201 - 14 chairs, TV, video capture"</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.rooms.available_times.date[]</p></td>
+                    <td>
+                        <p class="table_text">List of times as 24-hour strings that represent 30-minute blocks for which a reservation is available, for that particular date, formatted as MM-DD-YYYY. For example, the date 03-14-2015 mapped to list ["0000", "0030"] indicates that times 12:00 AM - 12:30 AM and 12:30 AM - 1:00 AM are available for reservation on 3/14/2015.</p>
+                    </td>
+                </tr>
+            </table>
+            <p class="text">Sample request:</p>
+            <pre>GET http://api.riceapps.org/api/library/rooms?key=nfkv05mmalawcba6ta00mhz536denf&amp;room=201</pre>
+            <p class="text">Sample response:</p>
+            <pre>
+Content-Type: application/json
+
+{
+  "message": null,
+  "result": "success",
+  "rooms": {
+    "201": {
+      "available_times": {
+        "03-14-2015": [
+          "1900",
+          "1930",
+          "2000",
+          "2030",
+          "2100",
+          "2130",
+          "2200",
+          "2230",
+          "2300",
+          "2330"
+        ],
+        "03-15-2015": [
+          "0000",
+          "0030",
+          "0100",
+          "0130",
+          "0200",
+          ...
+        ],
+        "03-16-2015": [
+          "0000",
+          "0030",
+          "0100",
+          "0130",
+          "0200",
+          ...
+        ]
+      },
+      "description": "Room 201 - 14 chairs, TV, video capture"
+    }
+  }
+}
+            </pre>
+            <br/>
+            <p class="subheading2">Parameters - api/library/hours</p>
+            <table border="1" cellpadding="10px">
+                <tr>
+                    <td><p class="bold_text">Parameter</p></td>
+                    <td><p class="bold_text">Description</p></td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">key*</p></td>
+                    <td>
+                        <p class="table_text">API key generated and authorized by this application. See <a href="#api">API key registration</a>. No other parameters are required.</p>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <p class="subheading2">Response - api/library/hours</p>
+            <table border="1" cellpadding="10px">
+                <tr>
+                    <td><p class="bold_text">Response field</p></td>
+                    <td><p class="bold_text">Description</p></td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.result</p></td>
+                    <td>
+                        <p class="table_text">"Success" or "failure" depending on whether the API request was successful or unsuccessful, respectively</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.message</p></td>
+                    <td>
+                        <p class="table_text">Error message if the API request was unsuccessful; null otherwise</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.hours.day</p></td>
+                    <td>
+                        <p class="table_text">Details for the opening and closing times for day, which is a string Sunday through Saturday. The data is current and live--the data returned is for whatever calendar week is active when the API call is executed.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.hours.day.24_hours</p></td>
+                    <td>
+                        <p class="table_text">True if Fondren is open 24 hours that day; false otherwise</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.hours.day.open</p></td>
+                    <td>
+                        <p class="table_text">Time that Fondren opens that day, in the format #am/pm (no number padding). "Closed" if Fondren is closed that day.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p class="table_text">response.hours.day.close</p></td>
+                    <td>
+                        <p class="table_text">Time that Fondren closes that day, in the format #am/pm (no number padding). "Closed" if Fondren is closed that day.</p>
+                    </td>
+                </tr>
+            </table>
+            <p class="text">Sample request:</p>
+            <pre>GET http://api.riceapps.org/api/library/hours?key=nfkv05mmalawcba6ta00mhz536denf</pre>
+            <p class="text">Sample response:</p>
+            <pre>
+Content-Type: application/json
+
+{
+  "hours": {
+    "Friday": {
+      "24_hours": false,
+      "close": "10pm",
+      "open": "12am"
+    },
+    "Monday": {
+      "24_hours": true,
+      "close": "12am",
+      "open": "12am"
+    },
+    "Saturday": {
+      "24_hours": false,
+      "close": "10pm",
+      "open": "9am"
+    },
+    "Sunday": {
+      "24_hours": false,
+      "close": "12am",
+      "open": "12pm"
+    },
+    "Thursday": {
+      "24_hours": true,
+      "close": "12am",
+      "open": "12am"
+    },
+    "Tuesday": {
+      "24_hours": true,
+      "close": "12am",
+      "open": "12am"
+    },
+    "Wednesday": {
+      "24_hours": true,
+      "close": "12am",
+      "open": "12am"
+    }
+  },
+  "message": null,
+  "result": "success"
+}
+            </pre>
+            <br/>
             <a name="example"></a>
             <p class="heading">Example</p>
             <p class="text">The below example is a simple, sample application of Rice API in Python. Any language that supports JSON parsing can use Rice API.</p>
@@ -405,12 +641,12 @@ api_key = "YOUR_API_KEY_HERE"
 name = "Kylie"
 
 # Get the JSON response from the server
-apiResponseString = urllib2.urlopen("http://api.riceapps.org/api/people?key=" + api_key + "&name=" + name).read()
-apiResponse = json.loads(apiResponseString)
+api_response_string = urllib2.urlopen("http://api.riceapps.org/api/people?key=" + api_key + "&name=" + name).read()
+api_response = json.loads(api_response_string)
 
 # Do something useful with it
-if apiResponse["result"] == "success":
-    students = apiResponse["people"]["students"]
+if api_response["result"] == "success":
+    students = api_response["people"]["students"]
     print "List of search results for criteria", name, "\n"
     for student in students:
         print "Name:", student["name"]
@@ -418,7 +654,7 @@ if apiResponse["result"] == "success":
         print "Year:", student["year"]
         print "College:", student["college"], "\n"
 else:
-    print "An error was encountered:", apiResponse["message"]
+    print "An error was encountered:", api_response["message"]
             </pre>
             <p class="text">The console output is as follows:</p>
             <pre>

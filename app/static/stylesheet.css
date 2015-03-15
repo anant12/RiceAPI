@@ -86,6 +86,13 @@ p.subheading {
     color: #242424;
 }
 
+p.subheading2 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: #242424;
+}
+
 p.footer {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;

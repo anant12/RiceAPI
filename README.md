@@ -42,7 +42,7 @@ Please see the below for full details on the parameters each API call accepts an
 |-----------|-------------|
 |key*|API key generated and authorized by this application.
 |net_id|Executes a 411 directory lookup of the specified Net ID. If this parameter is non-null, it will override the name parameter.
-|name|Executes a 411 directory lookup of the specified name. The passed string can contain spaces. The contents of this parameter will be overriden if the net_id parameter is non-null.
+|name|Executes a 411 directory lookup of the specified name. The passed string can contain spaces. The contents of this parameter will be overridden if the net_id parameter is non-null.
 
 #### Response
 The API separates people search results into students and faculty.
@@ -183,7 +183,7 @@ Content-Type: application/json
 |response.message|Error message if the API request was unsuccessful; null otherwise
 |response.rooms|List of rooms with reservation data
 |response.rooms.description|Description of the study room, i.e. "Room 201 - 14 chairs, TV, video capture"
-|response.rooms.available_times.date[]|List of times as 24-hour strings that represent 30-minute blocks for which a reservation is available, for that particular date, formatted as `MM-DD-YYYY`. For example, the date `03-14-2015` mapped to list `["0000, 0030"]` indicates that times 12:00 AM - 12:30 AM and 12:30 AM - 1:00 AM are available for reservation on 3/14/2015.
+|response.rooms.available_times.date[]|List of times as 24-hour strings that represent 30-minute blocks for which a reservation is available, for that particular date, formatted as `MM-DD-YYYY`. For example, the date `03-14-2015` mapped to list `["0000", "0030"]` indicates that times 12:00 AM - 12:30 AM and 12:30 AM - 1:00 AM are available for reservation on 3/14/2015.
 
 Sample request:
 ```
