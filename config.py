@@ -8,7 +8,7 @@ SECRET_KEY = str(os.urandom(24))
 API_KEY_LENGTH = 30
 
 # Location of SQLite database
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'users.db')
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data.db')
 
 # CAS authentication
 CAS_SERVER = 'https://netid.rice.edu'

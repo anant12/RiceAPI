@@ -3,12 +3,12 @@
 
 
 import urllib2
+import collections
 
-from flask import request
-import flask
+from flask import request, jsonify
 
-from app import app
-from app.database import User
+from app import app, db
+from app.database import User, Reservation
 import config
 
 from bs4 import BeautifulSoup
@@ -121,7 +121,7 @@ def people_api():
             "faculty": faculty
         }
     }
-    return flask.jsonify(**json)
+    return jsonify(json)
 
 
 @app.route('/api/courses')
@@ -206,8 +206,7 @@ def courses_api():
         "message": "null",
         "courses": courses
     }
-    return flask.jsonify(**json)
-
+    return jsonify(json)
 
 
 def is_api_key_valid(api_key):
@@ -227,4 +226,4 @@ def error(message):
         "result": "failure",
         "message": message
     }
-    return flask.jsonify(**json)
+    return jsonify(json)

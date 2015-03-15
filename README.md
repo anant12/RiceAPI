@@ -1,6 +1,6 @@
 # RiceAPI
 
-Rice API is a tool designed to allow students and faculty easy access to publicly accessible data about the university. The current supported functionality include retrieving information about a person (e.g. a student) and retrieving a list of courses based on search criteria. Data is returned by the API in a friendly, JSON format. Anyone with a valid Rice Net ID is permitted to use the tool.
+Rice API is a tool designed to allow students and faculty easy access to publicly accessible data about the university. The current supported functionality include retrieving information about a person (e.g. a student), retrieving a list of courses based on search criteria, and getting information about Fondren Library. Data is returned by the API in a friendly, JSON format. Anyone with a valid Rice Net ID is permitted to use the tool.
 
 This API interface was developed out of moderate frustration over the difficulty for developers to access information about the university without resorting to clumsy, line-by-line parsing of HTML data. This API does said clumsy parsing for you.
 
@@ -8,6 +8,7 @@ This API interface was developed out of moderate frustration over the difficulty
 * Easy-to-process JSON API response
 * Get information on Rice students and faculty
 * Get information on courses via search criteria
+* Get information on Fondren's available study rooms and open hours
 
 ## API Key Registration
 As a security measure, only Rice students and faculty (e.g. those with a valid Net ID) are permitted to use this API. Thus, the API will only respond to requests supplemented with a valid API key.
@@ -28,15 +29,22 @@ Full descriptions of parameters and actions supported by the API are detailed as
 |--------|-------------|
 |people|Look up information about Rice students and faculty. Data is pulled from [fouroneone.rice.edu](http://fouroneone.rice.edu)|
 |courses|Retrieve a list of courses matching some search criteria. Data is pulled from [courses.rice.edu](http://courses.rice.edu)
+|library/rooms|Gets details on the times that each study room is available for reservation. Data is pulled from [library.rice.edu](http://library.rice.edu)|
+|library/hours|Gets live details on Fondren's open hours for this week. Data is pulled from [library.rice.edu](http://library.rice.edu)|
 
-### Parameters - people
+## API Reference
+Please see the below for full details on the parameters each API call accepts and the form of the data returned by the request.
+
+### People API
+
+#### Parameters
 | Parameter | Description |
 |-----------|-------------|
 |key*|API key generated and authorized by this application.
 |net_id|Executes a 411 directory lookup of the specified Net ID. If this parameter is non-null, it will override the name parameter.
 |name|Executes a 411 directory lookup of the specified name. The passed string can contain spaces. The contents of this parameter will be overriden if the net_id parameter is non-null.
 
-### API response - people
+#### Response
 The API separates people search results into students and faculty.
 
 | Response field | Description |
@@ -85,7 +93,9 @@ Content-Type: application/json
 }
 ```
 
-### Parameters - courses
+### Courses API
+
+#### Parameters
 | Parameter | Description |
 |-----------|-------------|
 |key*|API key generated and authorized by this application. See API key registration.
@@ -96,7 +106,7 @@ Content-Type: application/json
 |instructor|Name(s) of the course instructor(s). It is not recommended to use this search option for the same reason as above.
 |subject|Four-letter subject code, e.g., "ELEC"
 
-### API response - courses
+#### Response
 | Response field | Description |
 |-----------|-------------|
 |response.result|"Success" or "failure" depending on whether the API request was successful or unsuccessful, respectively
@@ -151,6 +161,143 @@ Content-Type: application/json
     ...
   ],
   "message": "null",
+  "result": "success"
+}
+```
+
+### Library API
+
+#### Parameters - api/library/rooms
+| Parameter | Description |
+|-----------|-------------|
+|key*|API key generated and authorized by this application. See API key registration.
+|room|The room for which reservation details should be retrieved. If this parameter is omitted, the API will return data for all rooms.
+|live|By default, the API returns reservation data cached in a local database that is automatically and periodically updated with the latest room reservation data.* Set this parameter to `true` to force the API to query Fondren's reservation system directly to get live data. (It is highly recommended to omit this parameter or set it to `false` because querying Fondren directly is very slow.)
+
+*To manually request the server to update the database of reservation data, simply execute a GET request (no authorization necessary) to `http://api.riceapps.org/library/rooms/update`.
+
+#### Response - api/library/rooms
+| Response field | Description |
+|-----------|-------------|
+|response.result|"Success" or "failure" depending on whether the API request was successful or unsuccessful, respectively
+|response.message|Error message if the API request was unsuccessful; null otherwise
+|response.rooms|List of rooms with reservation data
+|response.rooms.description|Description of the study room, i.e. "Room 201 - 14 chairs, TV, video capture"
+|response.rooms.available_times.date[]|List of times as 24-hour strings that represent 30-minute blocks for which a reservation is available, for that particular date, formatted as `MM-DD-YYYY`. For example, the date `03-14-2015` mapped to list `["0000, 0030"]` indicates that times 12:00 AM - 12:30 AM and 12:30 AM - 1:00 AM are available for reservation on 3/14/2015.
+
+Sample request:
+```
+GET http://api.riceapps.org/api/library/rooms?key=nfkv05mmalawcba6ta00mhz536denf&room=201
+```
+
+Sample response:
+```
+Content-Type: application/json
+
+{
+  "message": null,
+  "result": "success",
+  "rooms": {
+    "201": {
+      "available_times": {
+        "03-14-2015": [
+          "1900",
+          "1930",
+          "2000",
+          "2030",
+          "2100",
+          "2130",
+          "2200",
+          "2230",
+          "2300",
+          "2330"
+        ],
+        "03-15-2015": [
+          "0000",
+          "0030",
+          "0100",
+          "0130",
+          "0200",
+          ...
+        ],
+        "03-16-2015": [
+          "0000",
+          "0030",
+          "0100",
+          "0130",
+          "0200",
+          ...
+        ]
+      },
+      "description": "Room 201 - 14 chairs, TV, video capture"
+    }
+  }
+}
+```
+
+#### Parameters - api/library/hours
+| Parameter | Description |
+|-----------|-------------|
+|key*|API key generated and authorized by this application. See API key registration. No other parameters are required.
+
+#### Response - api/library/rooms
+| Response field | Description |
+|-----------|-------------|
+|response.result|"Success" or "failure" depending on whether the API request was successful or unsuccessful, respectively
+|response.message|Error message if the API request was unsuccessful; null otherwise
+|response.hours.day|Details for the opening and closing times for day, which is a string Sunday through Saturday. The data is current and live--the data returned is for whatever calendar week is active when the API call is executed.
+|response.hours.day.24_hours|True if Fondren is open 24 hours that day; false otherwise
+|response.hours.day.open|Time that Fondren opens that day, in the format #am/pm (no number padding). "Closed" if Fondren is closed that day.
+|response.hours.day.close|Time that Fondren closes that day, in the format #am/pm (no number padding). "Closed" if Fondren is closed that day.
+
+Sample request:
+```
+GET http://api.riceapps.org/api/library/hours?key=nfkv05mmalawcba6ta00mhz536denf
+```
+
+Sample response:
+```
+Content-Type: application/json
+
+{
+  "hours": {
+    "Friday": {
+      "24_hours": false,
+      "close": "10pm",
+      "open": "12am"
+    },
+    "Monday": {
+      "24_hours": true,
+      "close": "12am",
+      "open": "12am"
+    },
+    "Saturday": {
+      "24_hours": false,
+      "close": "10pm",
+      "open": "9am"
+    },
+    "Sunday": {
+      "24_hours": false,
+      "close": "12am",
+      "open": "12pm"
+    },
+    "Thursday": {
+      "24_hours": true,
+      "close": "12am",
+      "open": "12am"
+    },
+    "Tuesday": {
+      "24_hours": true,
+      "close": "12am",
+      "open": "12am"
+    },
+    "Wednesday": {
+      "24_hours": true,
+      "close": "12am",
+      "open": "12am"
+    }
+  },
+  "message": null,
   "result": "success"
 }
 ```
