@@ -8,7 +8,7 @@ APP_URL = "http://api.riceapps.org"
 while True:
     print "Debug: Requesting database update"
     try:
-        urllib2.urlopen(APP_URL + "/api/library/update")
+        urllib2.urlopen(APP_URL + "/api/library/rooms/update")
         print "Debug: Database updated successfully!"
     except:
         print "Debug: Failed to update database!"
